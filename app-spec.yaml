@@ -1,0 +1,86 @@
+alerts:
+- rule: DEPLOYMENT_FAILED
+- rule: DOMAIN_FAILED
+databases:
+- cluster_name: db-redis-nyc3-28756
+  engine: REDIS
+  name: db-redis-nyc3-28756
+  production: true
+  version: "6"
+- cluster_name: db-mysql-nyc3-47506
+  db_name: fleet
+  db_user: fleet
+  engine: MYSQL
+  name: db-mysql-nyc3-47506
+  production: true
+  version: "8"
+domains:
+- domain: demo.fleetdm.com
+  type: PRIMARY
+envs:
+- key: FLEET_MYSQL_ADDRESS
+  scope: RUN_TIME
+  value: ${db-mysql-nyc3-47506.HOSTNAME}:${db-mysql-nyc3-47506.PORT}
+- key: FLEET_MYSQL_PASSWORD
+  scope: RUN_TIME
+  value: ${db-mysql-nyc3-47506.PASSWORD}
+- key: FLEET_MYSQL_USERNAME
+  scope: RUN_TIME
+  value: ${db-mysql-nyc3-47506.USERNAME}
+- key: FLEET_MYSQL_DATABASE
+  scope: RUN_TIME
+  value: ${db-mysql-nyc3-47506.DATABASE}
+- key: FLEET_REDIS_ADDRESS
+  scope: RUN_TIME
+  value: ${db-redis-nyc3-28756.HOSTNAME}:${db-redis-nyc3-28756.PORT}
+- key: FLEET_SERVER_TLS
+  scope: RUN_AND_BUILD_TIME
+  value: "false"
+- key: FLEET_REDIS_PASSWORD
+  scope: RUN_AND_BUILD_TIME
+  value: ${db-redis-nyc3-28756.PASSWORD}
+- key: FLEET_REDIS_USE_TLS
+  scope: RUN_AND_BUILD_TIME
+  value: "true"
+jobs:
+- envs:
+  - key: DATABASE_URL
+    scope: RUN_TIME
+    value: ${db-redis-nyc3-28756.DATABASE_URL}
+  image:
+    registry: fleetdm
+    registry_type: DOCKER_HUB
+    repository: fleet
+    tag: latest
+  instance_count: 1
+  instance_size_slug: basic-xs
+  kind: PRE_DEPLOY
+  name: fleet-migrate
+  run_command: fleet prepare --no-prompt=true db
+  source_dir: /
+name: fleet
+region: nyc
+services:
+- envs:
+  - key: FLEET_LICENSE_KEY
+    scope: RUN_TIME
+    type: SECRET
+    value: EV[1:3ddOAKxV53kaSnaVAcq5DxjmB8E2bkjX:2zYVAGfoljMr4WJa84QBSCvKmnWJHsZyd2rmo/fTbPL7DM/hLtCTNYGOxQdeTjkC8H5nLwICiXkNYtxjFZW53Iip7IjeuRvRpvI7ojXTSZJEv1jQJYvdTBdvOHC2wCssKqjMzEgE09DZcIO1dPdRiJ1rpRLVnNdCUCtuGn+c1WlMLVgQBEWh7tBT7pyH3GRTUXVSdJqYcCqxzrNJpMabBZkfBIjpzpRFU+zt2iglo4881yM81/GF3RP8dPrU4MGARKMQFQjA4M7WWr8OyLwWR4xb8I5kOxsyRQ2EQmCwDdD7QItkHVeSSs7cGgYLOygV272zV2/qpx1gq3DMBUzvKXpXfYIv+0inOokA8BWUVe4afUhUXnG+uflaZFlKoO2mjnd5UtMAtKLgWQqCFU4LaQ/lobFBeTe9PlhTP1ta128pwLuVSKs4g/rXQHwMyqqfoI5ufArg]
+  - key: FLEET_VULNERABILITIES_DATABASES_PATH
+    scope: RUN_AND_BUILD_TIME
+    value: /home/fleet
+  health_check:
+    http_path: /healthz
+  http_port: 8080
+  image:
+    registry: fleetdm
+    registry_type: DOCKER_HUB
+    repository: fleet
+    tag: latest
+  instance_count: 1
+  instance_size_slug: basic-xs
+  name: fleet
+  routes:
+  - path: /
+  run_command: fleet serve
+  source_dir: /
