@@ -67,8 +67,11 @@ services:
     type: SECRET
     value: EV[1:3ddOAKxV53kaSnaVAcq5DxjmB8E2bkjX:2zYVAGfoljMr4WJa84QBSCvKmnWJHsZyd2rmo/fTbPL7DM/hLtCTNYGOxQdeTjkC8H5nLwICiXkNYtxjFZW53Iip7IjeuRvRpvI7ojXTSZJEv1jQJYvdTBdvOHC2wCssKqjMzEgE09DZcIO1dPdRiJ1rpRLVnNdCUCtuGn+c1WlMLVgQBEWh7tBT7pyH3GRTUXVSdJqYcCqxzrNJpMabBZkfBIjpzpRFU+zt2iglo4881yM81/GF3RP8dPrU4MGARKMQFQjA4M7WWr8OyLwWR4xb8I5kOxsyRQ2EQmCwDdD7QItkHVeSSs7cGgYLOygV272zV2/qpx1gq3DMBUzvKXpXfYIv+0inOokA8BWUVe4afUhUXnG+uflaZFlKoO2mjnd5UtMAtKLgWQqCFU4LaQ/lobFBeTe9PlhTP1ta128pwLuVSKs4g/rXQHwMyqqfoI5ufArg]
   - key: FLEET_VULNERABILITIES_DATABASES_PATH
-    scope: RUN_AND_BUILD_TIME
+    scope: RUN_TIME
     value: /home/fleet
+  - key: FLEET_BETA_SOFTWARE_INVENTORY
+    scope: RUN_TIME
+    value: "1"
   health_check:
     http_path: /healthz
   http_port: 8080
